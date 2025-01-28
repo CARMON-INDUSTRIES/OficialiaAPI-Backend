@@ -80,7 +80,7 @@ namespace OficialiaCrudAPI.Controllers
                 var user = await _userManager.FindByNameAsync(model.UserName);
                 var token = GenerateJwtToken(user);
 
-                return Ok();
+                return Ok(new { token });
             }
 
             return Unauthorized();
