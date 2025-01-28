@@ -80,7 +80,7 @@ app.UseSwaggerUI();
 
 app.Use(async (context, next) =>
 {
-    context.Response.Headers.Add("Access-Control-Allow-Origin", "https://oficialia-frontend-login.vercel.app, http://localhost:3000, http://localhost:3001");
+    context.Response.Headers.Add("Access-Control-Allow-Origin", "https://oficialia-frontend-login.vercel.app");
     context.Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
     context.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization");
     context.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
