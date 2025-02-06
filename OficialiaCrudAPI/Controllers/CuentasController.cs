@@ -9,6 +9,7 @@ using System.Text;
 
 namespace OficialiaCrudAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     [AllowAnonymous]

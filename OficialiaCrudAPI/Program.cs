@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using OficialiaCrudAPI.Data;
+using OficialiaCrudAPI.DTO;
+using OficialiaCrudAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -29,8 +31,11 @@ builder.Services.AddCors(options =>
                       });
 });
 
-builder.Services.AddDbContext<AppDataDbContext>(option =>
-option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<AppDataDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+           .EnableSensitiveDataLogging()
+           .LogTo(Console.WriteLine, LogLevel.Information)
+);
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
@@ -67,6 +72,8 @@ builder.Services.AddAuthorization(Options =>
     Options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
     Options.AddPolicy("UserPolicy", policy => policy.RequireRole("User"));
 });
+
+builder.Services.AddScoped<ICorrespondenciaService, CorrespondenciaService>();
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.

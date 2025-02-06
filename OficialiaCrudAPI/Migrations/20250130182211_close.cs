@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace OficialiaCrudAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class wea : Migration
+    public partial class close : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -48,6 +48,27 @@ namespace OficialiaCrudAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Registros",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Folio = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FechaDocumento = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Dependencia = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Comunidad = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Remitente = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Solicitante = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Documento = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AreaDestino = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FechaRegistro = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Registros", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -229,6 +250,9 @@ namespace OficialiaCrudAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Registros");
 
             migrationBuilder.DropTable(
                 name: "Students");
