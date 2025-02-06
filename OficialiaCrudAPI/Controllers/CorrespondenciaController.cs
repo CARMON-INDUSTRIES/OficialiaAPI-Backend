@@ -9,10 +9,12 @@ namespace OficialiaCrudAPI.Controllers
     public class CorrespondenciaController : ControllerBase
     {
         private readonly ICorrespondenciaService _service;
+        private readonly IComunidadesService _comunidadesService;
 
-        public CorrespondenciaController(ICorrespondenciaService service)
+        public CorrespondenciaController(ICorrespondenciaService service, IComunidadesService comunidadesService)
         {
             _service = service;
+            _comunidadesService = comunidadesService;
         }
 
         [HttpGet("obtener")]
@@ -39,5 +41,18 @@ namespace OficialiaCrudAPI.Controllers
 
             return Ok(new { mensaje = "Correspondencia registrada exitosamente" });
         }
+
+        [HttpGet("obtener-comunidades")]
+        public async Task<IActionResult> ObtenerComunidades()
+        {
+            if (_comunidadesService == null)
+            {
+                return StatusCode(500, "El servicio de comunidades no está inicializado.");
+            }
+
+            var comunidades = await _comunidadesService.ObtenerComunidades();
+            return Ok(comunidades);
+        }
+
     }
 }

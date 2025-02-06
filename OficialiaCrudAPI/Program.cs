@@ -74,6 +74,8 @@ builder.Services.AddAuthorization(Options =>
 });
 
 builder.Services.AddScoped<ICorrespondenciaService, CorrespondenciaService>();
+builder.Services.AddScoped<IComunidadesService, ComunidadesService>();
+
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.

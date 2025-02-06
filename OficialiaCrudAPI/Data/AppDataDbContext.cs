@@ -14,7 +14,7 @@ namespace OficialiaCrudAPI.Data
         public DbSet<Usuario> Students { get; set; }
         public DbSet<Correspondencias> Correspondencia { get; set; }
         public DbSet<Area> Area { get; set; }
-        public DbSet<Comunidades> Comunidad { get; set; }
+        public DbSet<Comunidades> Comunidades { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
