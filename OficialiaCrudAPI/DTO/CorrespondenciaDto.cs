@@ -13,7 +13,8 @@
         public string CargoDestinatario { get; set; }
         public int Area { get; set; }
         public string Documento { get; set; }
-
+        public int Status { get; set; }
+        public int Importancia { get; set; }
 
     }
 }

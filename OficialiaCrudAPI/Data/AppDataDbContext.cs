@@ -15,6 +15,9 @@ namespace OficialiaCrudAPI.Data
         public DbSet<Correspondencias> Correspondencia { get; set; }
         public DbSet<Area> Area { get; set; }
         public DbSet<Comunidades> Comunidades { get; set; }
+        public DbSet<Importancia> Importancia { get; set; }
+
+        public DbSet<Status> Status { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -31,6 +34,18 @@ namespace OficialiaCrudAPI.Data
                 .WithMany(com => com.Correspondencias) 
                 .HasForeignKey(c => c.Comunidad) 
                 .HasConstraintName("FK_correspondencia_comunidad");
+
+            modelBuilder.Entity<Correspondencias>()
+               .HasOne(c => c.ImportanciaNavigation)
+               .WithMany(com => com.Correspondencias)
+               .HasForeignKey(c => c.Importancia)
+               .HasConstraintName("FK_correspondencia_importancia");
+
+            modelBuilder.Entity<Correspondencias>()
+               .HasOne(c => c.StatusNavigation)
+               .WithMany(com => com.Correspondencias)
+               .HasForeignKey(c => c.Status)
+               .HasConstraintName("FK_correspondencia_status");
         }
 
     }

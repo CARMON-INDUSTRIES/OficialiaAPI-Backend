@@ -49,14 +49,55 @@ namespace OficialiaCrudAPI.Services
                 Comunidad = correspondenciaDto.Comunidad,
                 CargoRemitente = correspondenciaDto.CargoRemitente,
                 CargoDestinatario = correspondenciaDto.CargoDestinatario,
-                Area = correspondenciaDto.Area,  // Asegurarse de que el ID del área sea válido
-                Documento = correspondenciaDto.Documento
+                Area = correspondenciaDto.Area,  
+                Documento = correspondenciaDto.Documento,
+                Status = correspondenciaDto.Status,
+                Importancia = correspondenciaDto.Importancia
             };
 
             _context.Correspondencia.Add(nuevaCorrespondencia);
             return await _context.SaveChangesAsync() > 0;
         }
 
+        public async Task<bool> EliminarCorrespondencia(int folio)
+        {
+            var correspondencia = await _context.Correspondencia
+                .FirstOrDefaultAsync(c => c.Folio == folio);
+
+            if (correspondencia == null)
+            {
+                return false; 
+            }
+
+            _context.Correspondencia.Remove(correspondencia);
+            await _context.SaveChangesAsync();
+            return true; 
+        }
+
+        public async Task<bool> EditarCorrespondencia(CorrespondenciaDto correspondenciaDto)
+        {
+            var correspondencia = await _context.Correspondencia
+                .FirstOrDefaultAsync(c => c.Folio == correspondenciaDto.Folio);
+            if (correspondencia == null)
+            {
+                return false;
+            }
+
+            correspondencia.Fecha = DateTime.ParseExact(correspondenciaDto.Fecha, "dd/MM/yyyy", null);
+            correspondencia.Dependencia = correspondenciaDto.Dependencia;
+            correspondencia.Asunto = correspondenciaDto.Asunto;
+            correspondencia.Remitente = correspondenciaDto.Remitente;
+            correspondencia.Destinatario = correspondenciaDto.Destinatario;
+            correspondencia.Comunidad = correspondenciaDto.Comunidad;
+            correspondencia.CargoRemitente = correspondenciaDto.CargoRemitente;
+            correspondencia.CargoDestinatario = correspondenciaDto.CargoDestinatario;
+            correspondencia.Area = correspondenciaDto.Area;
+            correspondencia.Documento = correspondenciaDto.Documento;
+            correspondencia.Status = correspondenciaDto.Status;
+            correspondencia.Importancia = correspondenciaDto.Importancia;
+            await _context.SaveChangesAsync();
+            return true;
+        }
 
     }
 }

@@ -75,6 +75,9 @@ builder.Services.AddAuthorization(Options =>
 
 builder.Services.AddScoped<ICorrespondenciaService, CorrespondenciaService>();
 builder.Services.AddScoped<IComunidadesService, ComunidadesService>();
+builder.Services.AddScoped<IAreaService, AreaService>();
+builder.Services.AddScoped<IImportanciaService, ImportanciaService>();
+builder.Services.AddScoped<IStatusService, StatusService>();
 
 
 var app = builder.Build();

@@ -36,5 +36,16 @@ namespace OficialiaCrudAPI.Models
         public int Comunidad { get; set; }
 
         public Comunidades ComunidadNavigation { get; set; }
+
+        [ForeignKey("ImportanciaNavigation")]
+        public int Importancia { get; set; }
+
+        public Importancia ImportanciaNavigation { get; set; }
+
+        [ForeignKey("StatusNavigation")]
+        public int Status { get; set; }
+
+        public Status StatusNavigation { get; set; }
+
     }
 }

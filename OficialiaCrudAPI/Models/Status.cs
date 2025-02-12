@@ -2,13 +2,13 @@
 
 namespace OficialiaCrudAPI.Models
 {
-    public class Area
+    public class Status
     {
         [Key]
-        public int IdArea { get; set; }
-        public string NombreArea { get; set; }
+        public int IdStatus { get; set; }
+        public string Estado { get; set; }
 
-        // Relación inversa: un área puede tener muchas correspondencias
         public ICollection<Correspondencias> Correspondencias { get; set; } = new List<Correspondencias>();
+
     }
 }
