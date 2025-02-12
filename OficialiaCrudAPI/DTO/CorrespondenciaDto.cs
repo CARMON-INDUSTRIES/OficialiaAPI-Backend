@@ -3,7 +3,7 @@
      public class CorrespondenciaDto
     {
         public int Folio { get; set; }
-        public string Fecha { get; set; }  
+        public DateTime Fecha { get; set; }  
         public string Dependencia { get; set; }
         public string Asunto { get; set; }
         public string Remitente { get; set; }
@@ -11,7 +11,7 @@
         public int Comunidad { get; set; }
         public string CargoRemitente { get; set; }
         public string CargoDestinatario { get; set; }
-        public int Area { get; set; }
+        public List<int> Area { get; set; }
         public string Documento { get; set; }
         public int Status { get; set; }
         public int Importancia { get; set; }

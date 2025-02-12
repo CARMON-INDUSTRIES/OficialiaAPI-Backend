@@ -27,7 +27,6 @@ builder.Services.AddCors(options =>
                                 .AllowAnyMethod()
                                 .AllowAnyHeader()
                                 .AllowCredentials();
-
                       });
 });
 
@@ -78,7 +77,7 @@ builder.Services.AddScoped<IComunidadesService, ComunidadesService>();
 builder.Services.AddScoped<IAreaService, AreaService>();
 builder.Services.AddScoped<IImportanciaService, ImportanciaService>();
 builder.Services.AddScoped<IStatusService, StatusService>();
-
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
@@ -90,28 +89,15 @@ if (app.Environment.IsDevelopment())
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.Use(async (context, next) =>
-{
-    context.Response.Headers.Add("Access-Control-Allow-Origin", "https://oficialia-frontend-login.vercel.app");
-    context.Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    context.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization");
-    context.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
+// Agrega el middleware de enrutamiento
+app.UseRouting();
 
-    if (context.Request.Method == "OPTIONS")
-    {
-        context.Response.StatusCode = 200;
-        return;
-    }
-
-    await next();
-});
-
+// Configura CORS después del enrutamiento
 app.UseCors(MyAllowSpecificOrigins);
 
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 app.MapControllers();

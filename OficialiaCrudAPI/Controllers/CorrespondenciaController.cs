@@ -24,6 +24,16 @@ namespace OficialiaCrudAPI.Controllers
             _statusService = statusService;
         }
 
+ 
+        [HttpOptions("registrar")]
+        public IActionResult RegistrarOptions()
+        {
+            Response.Headers.Add("Access-Control-Allow-Origin", "https://oficialia-frontend-login.vercel.app");
+            Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+            Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization");
+            return Ok();
+        }
+
         [HttpGet("obtener")]
         public async Task<IActionResult> ObtenerCorrespondencias()
         {
@@ -34,20 +44,28 @@ namespace OficialiaCrudAPI.Controllers
         [HttpPost("registrar")]
         public async Task<IActionResult> RegistrarCorrespondencia([FromBody] CorrespondenciaDto correspondenciaDto)
         {
-            if (correspondenciaDto == null)
+            try
             {
-                return BadRequest("Los datos de la correspondencia son inválidos.");
+                if (correspondenciaDto == null)
+                {
+                    return BadRequest("Los datos de la correspondencia son inválidos.");
+                }
+
+                var resultado = await _service.RegistrarCorrespondencia(correspondenciaDto);
+
+                if (!resultado)
+                {
+                    return StatusCode(500, "Ocurrió un error al registrar la correspondencia.");
+                }
+
+                return Ok(new { mensaje = "Correspondencia registrada exitosamente" });
             }
-
-            var resultado = await _service.RegistrarCorrespondencia(correspondenciaDto);
-
-            if (!resultado)
+            catch (Exception ex)
             {
-                return StatusCode(500, "Ocurrió un error al registrar la correspondencia.");
+                return StatusCode(500, $"Error interno: {ex.Message}");
             }
-
-            return Ok(new { mensaje = "Correspondencia registrada exitosamente" });
         }
+
 
         [HttpGet("obtener-comunidades")]
         public async Task<IActionResult> ObtenerComunidades()
@@ -66,7 +84,7 @@ namespace OficialiaCrudAPI.Controllers
         {
             if (_areaService == null)
             {
-                return StatusCode(500, "El servicio de areas no está inicializado.");
+                return StatusCode(500, "El servicio de áreas no está inicializado.");
             }
 
             var area = await _areaService.ObtenerAreas();
@@ -127,8 +145,5 @@ namespace OficialiaCrudAPI.Controllers
 
             return Ok(new { mensaje = "Correspondencia actualizada exitosamente" });
         }
-
-
-
     }
 }
