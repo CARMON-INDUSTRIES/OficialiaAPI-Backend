@@ -17,17 +17,34 @@ namespace OficialiaCrudAPI.Services
         public async Task<List<CorrespondenciaDto>> ObtenerCorrespondencias()
         {
             return await _context.Correspondencia
+                .Include(c => c.AreaNavigation)  
+                .Include(c => c.ImportanciaNavigation)
+                .Include(c => c.StatusNavigation)
                 .Select(c => new CorrespondenciaDto
                 {
+                    Id = c.Id,
                     Folio = c.Folio,
                     Fecha = c.Fecha,
                     Dependencia = c.Dependencia,
                     Asunto = c.Asunto,
                     Remitente = c.Remitente,
-                    Destinatario = c.Destinatario
+                    Destinatario = c.Destinatario,
+                    Comunidad = c.Comunidad,
+                    CargoRemitente = c.CargoRemitente,
+                    CargoDestinatario = c.CargoDestinatario,
+                    Documento = c.Documento,
+                    Status = c.Status,
+                    Importancia = c.Importancia,
+                    Area = new List<int> { c.Area },
+                    AreaDescripcion = c.AreaNavigation.NombreArea,  
+                    StatusDescripcion = c.StatusNavigation.Estado,
+                    ComunidadDescripcion = c.ComunidadNavigation.NombreComunidad,
+                    ImportanciaDescripcion = c.ImportanciaNavigation.Nivel
                 })
                 .ToListAsync();
         }
+
+
 
         public async Task<bool> RegistrarCorrespondencia(CorrespondenciaDto correspondenciaDto)
         {
@@ -46,6 +63,7 @@ namespace OficialiaCrudAPI.Services
             {
                 var nuevaCorrespondencia = new Correspondencias
                 {
+                    Id = correspondenciaDto.Id,
                     Folio = correspondenciaDto.Folio,
                     Fecha = correspondenciaDto.Fecha,
                     Dependencia = correspondenciaDto.Dependencia,
@@ -68,10 +86,10 @@ namespace OficialiaCrudAPI.Services
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<bool> EliminarCorrespondencia(int folio)
+        public async Task<bool> EliminarCorrespondencia(int id)
         {
             var correspondencia = await _context.Correspondencia
-                .FirstOrDefaultAsync(c => c.Folio == folio);
+                .FirstOrDefaultAsync(c => c.Id == id);
 
             if (correspondencia == null)
             {
@@ -86,12 +104,14 @@ namespace OficialiaCrudAPI.Services
         public async Task<bool> EditarCorrespondencia(CorrespondenciaDto correspondenciaDto)
         {
             var correspondencia = await _context.Correspondencia
-                .FirstOrDefaultAsync(c => c.Folio == correspondenciaDto.Folio);
+                .FirstOrDefaultAsync(c => c.Id == correspondenciaDto.Id);
             if (correspondencia == null)
             {
                 return false;
             }
 
+            correspondencia.Id = correspondenciaDto.Id;
+            correspondencia.Folio = correspondenciaDto.Folio;
             correspondencia.Fecha = correspondenciaDto.Fecha;
             correspondencia.Dependencia = correspondenciaDto.Dependencia;
             correspondencia.Asunto = correspondenciaDto.Asunto;
@@ -100,7 +120,7 @@ namespace OficialiaCrudAPI.Services
             correspondencia.Comunidad = correspondenciaDto.Comunidad;
             correspondencia.CargoRemitente = correspondenciaDto.CargoRemitente;
             correspondencia.CargoDestinatario = correspondenciaDto.CargoDestinatario;
-            correspondencia.Area = correspondenciaDto.Area.FirstOrDefault(); // Se asigna solo el primer valor si se cambia a un único campo
+            correspondencia.Area = correspondenciaDto.Area.FirstOrDefault(); 
             correspondencia.Documento = correspondenciaDto.Documento;
             correspondencia.Status = correspondenciaDto.Status;
             correspondencia.Importancia = correspondenciaDto.Importancia;

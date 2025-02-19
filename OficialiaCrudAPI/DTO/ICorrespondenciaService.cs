@@ -4,7 +4,7 @@
     {
         Task<List<CorrespondenciaDto>> ObtenerCorrespondencias();
         Task<bool> RegistrarCorrespondencia(CorrespondenciaDto correspondenciaDto);
-        Task<bool> EliminarCorrespondencia(int folio);
+        Task<bool> EliminarCorrespondencia(int id);
         Task<bool> EditarCorrespondencia(CorrespondenciaDto correspondenciaDto);
 
 

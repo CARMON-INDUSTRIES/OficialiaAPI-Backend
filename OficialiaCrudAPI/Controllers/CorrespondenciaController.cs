@@ -115,10 +115,10 @@ namespace OficialiaCrudAPI.Controllers
             return Ok(area);
         }
 
-        [HttpDelete("eliminar/{folio}")]
-        public async Task<IActionResult> EliminarCorrespondencia(int folio)
+        [HttpDelete("eliminar/{id}")]
+        public async Task<IActionResult> EliminarCorrespondencia(int id)
         {
-            var resultado = await _service.EliminarCorrespondencia(folio);
+            var resultado = await _service.EliminarCorrespondencia(id);
 
             if (!resultado)
             {
@@ -128,10 +128,10 @@ namespace OficialiaCrudAPI.Controllers
             return Ok(new { mensaje = "Correspondencia eliminada exitosamente." });
         }
 
-        [HttpPut("editar/{folio}")]
-        public async Task<IActionResult> EditarCorrespondencia(int folio, [FromBody] CorrespondenciaDto correspondenciaDto)
+        [HttpPut("editar/{id}")]
+        public async Task<IActionResult> EditarCorrespondencia(int id, [FromBody] CorrespondenciaDto correspondenciaDto)
         {
-            if (correspondenciaDto == null || folio != correspondenciaDto.Folio)
+            if (correspondenciaDto == null || id != correspondenciaDto.Id)
             {
                 return BadRequest("Datos inválidos.");
             }

@@ -45,6 +45,29 @@ public class RolesController : ControllerBase
 
         return BadRequest(new { mensaje = "Error al asignar el rol.", errores = result.Errors });
     }
+
+    [HttpGet("GetRoles")]
+    public IActionResult GetRoles()
+    {
+        var roles = _roleManager.Roles.Select(r => r.Name).ToList();
+        return Ok(roles);
+    }
+
+    [HttpGet("GetUsersWithRoles")]
+    public async Task<IActionResult> GetUsersWithRoles()
+    {
+        var users = _userManager.Users.ToList();
+        var usersWithRoles = new List<object>();
+
+        foreach (var user in users)
+        {
+            var roles = await _userManager.GetRolesAsync(user);
+            usersWithRoles.Add(new { user.Email, Roles = roles });
+        }
+
+        return Ok(usersWithRoles);
+    }
+
 }
 
 public class AsignarRolRequest
