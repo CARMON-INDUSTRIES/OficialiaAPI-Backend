@@ -10,6 +10,7 @@
     public int Comunidad { get; set; }
     public string CargoRemitente { get; set; }
     public string CargoDestinatario { get; set; }
+    public List<int> AreaDestino { get; set; } = new List<int>();
     public List<int> Area { get; set; }
     public string? AreaDescripcion { get; set; } 
     public string Documento { get; set; }

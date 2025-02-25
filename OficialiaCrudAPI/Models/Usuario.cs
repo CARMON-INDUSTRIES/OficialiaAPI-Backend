@@ -5,7 +5,7 @@ namespace OficialiaCrudAPI.Models
     public class Usuario
     {
         [Key]
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         public string Name { get; set; }
 

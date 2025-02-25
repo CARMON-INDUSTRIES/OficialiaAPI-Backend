@@ -11,12 +11,15 @@ namespace OficialiaCrudAPI.Data
         {
         }
 
-        public DbSet<Usuario> Students { get; set; }
+        public DbSet<Usuario> Student { get; set; }
         public DbSet<Correspondencias> Correspondencia { get; set; }
         public DbSet<Area> Area { get; set; }
         public DbSet<Comunidades> Comunidades { get; set; }
         public DbSet<Importancia> Importancia { get; set; }
         public DbSet<Status> Status { get; set; }
+        public DbSet<UsuarioArea> UsuarioArea { get; set; }
+        public DbSet<FormularioAreaDestino> FormularioAreaDestino { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -45,6 +48,7 @@ namespace OficialiaCrudAPI.Data
                .WithMany(com => com.Correspondencias)
                .HasForeignKey(c => c.Status)
                .HasConstraintName("FK_correspondencia_status");
+
         }
 
     }

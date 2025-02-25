@@ -6,6 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using OficialiaCrudAPI.Models;
 using System.Security.Claims;
 using System.Text;
+using OficialiaCrudAPI.DTO;
 
 namespace OficialiaCrudAPI.Controllers
 {
@@ -18,14 +19,17 @@ namespace OficialiaCrudAPI.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IUsuarioService _service;
         private IConfiguration _config;
 
 
-        public CuentasController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager, IConfiguration config)
+        public CuentasController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, 
+            RoleManager<IdentityRole> roleManager, IUsuarioService service, IConfiguration config)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _service = service;
             _config = config;
         }
 
@@ -48,21 +52,18 @@ namespace OficialiaCrudAPI.Controllers
                     await _roleManager.CreateAsync(new IdentityRole("User"));
                 }
 
-                // Check if there are any users in the system
                 var anyUsers = _userManager.Users.Count();
 
                 if (anyUsers == 1)
                 {
-                    // Assign Admin role to the first user
                     await _userManager.AddToRoleAsync(user, "Admin");
                 }
                 else
                 {
-                    // Assign User role to other users
                     await _userManager.AddToRoleAsync(user, "User");
                 }
 
-                return Ok(new { Status = "Success", Message = "Usuario registrado!" });
+                return Ok(new { Status = "Success", Message = "Usuario registrado!", UserId = user.Id });
             }
 
             return BadRequest(new { Status = "Error", Message = "Error, fallo al registrar!", Errors = result.Errors });
@@ -87,27 +88,37 @@ namespace OficialiaCrudAPI.Controllers
             return Unauthorized();
         }
 
-        //private string GenerateJwtToken(IdentityUser user)
-        //{
-        //    var roles =  _userManager.GetRolesAsync(user).Result;
-        //    var role = roles.FirstOrDefault();
-        //    var tokenHandler = new JwtSecurityTokenHandler();
-        //    var key = Encoding.ASCII.GetBytes(_config["Jwt:Key"]);
-        //    var tokenDescriptor = new SecurityTokenDescriptor
-        //    {
-        //        Subject = new ClaimsIdentity(new[] {
-        //            new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-        //            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-        //            new Claim(ClaimTypes.NameIdentifier, user.Id),
-        //            new Claim(ClaimTypes.Role,role)
-        //        }),
-        //        Expires = DateTime.UtcNow.AddHours(1),
-        //        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-        //    };
+        [HttpDelete("EliminarUsuario/{id}")]
+        public async Task<IActionResult> EliminarUsuario(string id)
+        {
+            var usuario = await _userManager.FindByIdAsync(id);
 
-        //    var token = tokenHandler.CreateToken(tokenDescriptor);
-        //    return tokenHandler.WriteToken(token);
-        //}
+            if (usuario == null)
+            {
+                return NotFound(new { mensaje = "No se encontró el usuario con el ID proporcionado." });
+            }
+
+            try
+            {
+                // Eliminar registros relacionados en UsuarioArea
+                await _service.EliminarUsuarioAreaPorUsuarioId(id);
+
+                // Ahora eliminar el usuario
+                var resultado = await _userManager.DeleteAsync(usuario);
+
+                if (!resultado.Succeeded)
+                {
+                    return BadRequest(new { mensaje = "No se pudo eliminar el usuario.", errores = resultado.Errors });
+                }
+
+                return Ok(new { mensaje = "Usuario eliminado exitosamente." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Ocurrió un error interno.", error = ex.Message });
+            }
+        }
+
 
         private string GenerateJwtToken(IdentityUser user)
         {

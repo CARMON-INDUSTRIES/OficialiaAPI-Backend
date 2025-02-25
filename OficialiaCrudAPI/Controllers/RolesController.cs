@@ -17,10 +17,8 @@ public class RolesController : ControllerBase
     }
 
     [HttpPost("AsignarRol")]
-
     public async Task<IActionResult> AsignarRol([FromBody] AsignarRolRequest request)
     {
-
         var user = await _userManager.FindByEmailAsync(request.Email);
         if (user == null)
         {
@@ -49,7 +47,7 @@ public class RolesController : ControllerBase
     [HttpGet("GetRoles")]
     public IActionResult GetRoles()
     {
-        var roles = _roleManager.Roles.Select(r => r.Name).ToList();
+        var roles = _roleManager.Roles.Select(r => new { r.Id, r.Name }).ToList();
         return Ok(roles);
     }
 
@@ -62,12 +60,17 @@ public class RolesController : ControllerBase
         foreach (var user in users)
         {
             var roles = await _userManager.GetRolesAsync(user);
-            usersWithRoles.Add(new { user.Email, Roles = roles });
+            usersWithRoles.Add(new
+            {
+                user.Id,
+                user.UserName,  // Nombre de usuario
+                user.Email,
+                Roles = roles
+            });
         }
 
         return Ok(usersWithRoles);
     }
-
 }
 
 public class AsignarRolRequest

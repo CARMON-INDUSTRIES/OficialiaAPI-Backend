@@ -19,5 +19,18 @@ namespace OficialiaCrudAPI.Services
                 Name = x.UserName
             }).ToListAsync();
         }
+
+        public async Task EliminarUsuarioAreaPorUsuarioId(string userId)
+        {
+            var registrosRelacionados = await _context.UsuarioArea
+                .Where(x => x.UserId == userId)
+                .ToListAsync();
+
+            if (registrosRelacionados.Any())
+            {
+                _context.UsuarioArea.RemoveRange(registrosRelacionados);
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }
