@@ -1,10 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace OficialiaCrudAPI.Models
+﻿namespace OficialiaCrudAPI.DTO
 {
-    public class UsuarioArea
+    public class UsuarioAreaDto
     {
-        [Key]
         public int Id { get; set; }
         public string? UserId { get; set; }
         public int AreaId { get; set; }
