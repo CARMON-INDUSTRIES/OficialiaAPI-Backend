@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using OficialiaCrudAPI.Data;
-using OficialiaCrudAPI.DTO;
+using OficialiaCrudAPI.Interfaces;
 using OficialiaCrudAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);

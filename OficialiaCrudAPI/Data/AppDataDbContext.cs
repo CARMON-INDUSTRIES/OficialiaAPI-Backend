@@ -18,7 +18,6 @@ namespace OficialiaCrudAPI.Data
         public DbSet<Importancia> Importancia { get; set; }
         public DbSet<Status> Status { get; set; }
         public DbSet<UsuarioArea> UsuarioArea { get; set; }
-        public DbSet<FormularioAreaDestino> FormularioAreaDestino { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

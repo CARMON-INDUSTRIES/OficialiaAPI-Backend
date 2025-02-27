@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using OficialiaCrudAPI.DTO;
+using OficialiaCrudAPI.Interfaces;
 using OficialiaCrudAPI.Services;
 
 namespace OficialiaCrudAPI.Controllers
@@ -113,13 +113,6 @@ namespace OficialiaCrudAPI.Controllers
 
             var area = await _statusService.ObtenerStatus();
             return Ok(area);
-        }
-
-        [HttpGet("obtener-asignaciones")]
-        public async Task<IActionResult> ObtenerAsignaciones()
-        {
-            var asignaciones = await _service.ObtenerAsignaciones();
-            return Ok(asignaciones);
         }
 
 

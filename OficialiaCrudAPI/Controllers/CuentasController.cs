@@ -6,7 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using OficialiaCrudAPI.Models;
 using System.Security.Claims;
 using System.Text;
-using OficialiaCrudAPI.DTO;
+using OficialiaCrudAPI.Interfaces;
 
 namespace OficialiaCrudAPI.Controllers
 {

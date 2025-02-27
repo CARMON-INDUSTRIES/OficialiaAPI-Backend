@@ -4,6 +4,7 @@ using OficialiaCrudAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using OficialiaCrudAPI.Interfaces;
 
 public class ComunidadesService : IComunidadesService
 {

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OficialiaCrudAPI.Data;
 using OficialiaCrudAPI.DTO;
+using OficialiaCrudAPI.Interfaces;
 
 namespace OficialiaCrudAPI.Services
 {

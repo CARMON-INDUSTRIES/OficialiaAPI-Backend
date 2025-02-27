@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OficialiaCrudAPI.Data;
-using OficialiaCrudAPI.DTO;
+using OficialiaCrudAPI.Interfaces;
 using OficialiaCrudAPI.Models;
 
 namespace OficialiaCrudAPI.Services
@@ -43,21 +43,6 @@ namespace OficialiaCrudAPI.Services
                 })
                 .ToListAsync();
         }
-
-
-        public async Task<List<FormularioAreaDestinoDto>> ObtenerAsignaciones()
-        {
-            return await _context.FormularioAreaDestino
-                .Select(fa => new FormularioAreaDestinoDto
-                {
-                    Id = fa.Id,
-                    CorrespondenciaId = fa.CorrespondenciaId,
-                    AreaId = fa.AreaId
-                })
-                .ToListAsync();
-        }
-
-
 
         public async Task<bool> RegistrarCorrespondencia(CorrespondenciaDto correspondenciaDto)
         {

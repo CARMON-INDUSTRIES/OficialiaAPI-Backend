@@ -1,4 +1,6 @@
-﻿namespace OficialiaCrudAPI.DTO
+﻿using OficialiaCrudAPI.DTO;
+
+namespace OficialiaCrudAPI.Interfaces
 {
     public interface IStatusService
     {

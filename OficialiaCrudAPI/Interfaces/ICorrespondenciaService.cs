@@ -1,4 +1,4 @@
-﻿namespace OficialiaCrudAPI.DTO
+﻿namespace OficialiaCrudAPI.Interfaces
 {
     public interface ICorrespondenciaService
     {
@@ -6,8 +6,6 @@
         Task<bool> RegistrarCorrespondencia(CorrespondenciaDto correspondenciaDto);
         Task<bool> EliminarCorrespondencia(int id);
         Task<bool> EditarCorrespondencia(CorrespondenciaDto correspondenciaDto);
-        Task<List<FormularioAreaDestinoDto>> ObtenerAsignaciones();
-
 
     }
 }
