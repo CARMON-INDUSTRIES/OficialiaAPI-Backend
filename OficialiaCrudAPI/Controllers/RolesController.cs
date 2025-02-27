@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using OficialiaCrudAPI.Data;
 using System.Threading.Tasks;
 
 [Route("api/[controller]")]
@@ -44,6 +45,30 @@ public class RolesController : ControllerBase
         return BadRequest(new { mensaje = "Error al asignar el rol.", errores = result.Errors });
     }
 
+    [HttpPost("QuitarRol")]
+    public async Task<IActionResult> QuitarRol([FromBody] QuitarRolRequest request)
+    {
+        var user = await _userManager.FindByEmailAsync(request.Email);
+        if (user == null)
+        {
+            return NotFound(new { mensaje = "Usuario no encontrado." });
+        }
+
+        if (!await _userManager.IsInRoleAsync(user, request.Role))
+        {
+            return BadRequest(new { mensaje = $"El usuario no tiene el rol '{request.Role}'." });
+        }
+
+        var result = await _userManager.RemoveFromRoleAsync(user, request.Role);
+        if (result.Succeeded)
+        {
+            return Ok(new { mensaje = $"Rol '{request.Role}' eliminado de '{request.Email}' correctamente." });
+        }
+
+        return BadRequest(new { mensaje = "Error al quitar el rol.", errores = result.Errors });
+    }
+
+
     [HttpGet("GetRoles")]
     public IActionResult GetRoles()
     {
@@ -63,7 +88,7 @@ public class RolesController : ControllerBase
             usersWithRoles.Add(new
             {
                 user.Id,
-                user.UserName,  // Nombre de usuario
+                user.UserName, 
                 user.Email,
                 Roles = roles
             });
@@ -74,6 +99,13 @@ public class RolesController : ControllerBase
 }
 
 public class AsignarRolRequest
+{
+    public string Email { get; set; }
+    public string Role { get; set; }
+}
+
+
+public class QuitarRolRequest
 {
     public string Email { get; set; }
     public string Role { get; set; }
