@@ -2,22 +2,39 @@
 using OficialiaCrudAPI.Data;
 using OficialiaCrudAPI.Interfaces;
 using OficialiaCrudAPI.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace OficialiaCrudAPI.Services
 {
     public class CorrespondenciaService : ICorrespondenciaService
     {
         private readonly AppDataDbContext _context;
+        private readonly IUsuarioService _usuarioService;
 
-        public CorrespondenciaService(AppDataDbContext context)
+        public CorrespondenciaService(AppDataDbContext context, IUsuarioService usuarioService)
         {
             _context = context;
+            _usuarioService = usuarioService;
         }
 
-        public async Task<List<CorrespondenciaDto>> ObtenerCorrespondencias()
+        public async Task<List<CorrespondenciaDto>> ObtenerCorrespondencias(string userId)
         {
+            // Obtener el AreaId del usuario
+            var usuarioArea = await _usuarioService.ObtenerUsuarioArea(userId);
+            if (usuarioArea == null)
+            {
+                return new List<CorrespondenciaDto>(); // Usuario sin área asignada, retorna lista vacía
+            }
+
+            int areaId = usuarioArea.AreaId;
+
+            // Filtrar correspondencias asignadas a esa área
             return await _context.Correspondencia
-                .Include(c => c.AreaNavigation)  
+                .Where(c => c.Area == areaId) // Filtrar solo las del área del usuario
+                .Include(c => c.AreaNavigation)
+                .Include(c => c.ComunidadNavigation)
                 .Include(c => c.ImportanciaNavigation)
                 .Include(c => c.StatusNavigation)
                 .Select(c => new CorrespondenciaDto
@@ -35,8 +52,8 @@ namespace OficialiaCrudAPI.Services
                     Documento = c.Documento,
                     Status = c.Status,
                     Importancia = c.Importancia,
-                    Area = new List<int> { c.Area },
-                    AreaDescripcion = c.AreaNavigation.NombreArea,  
+                    Area = new List<int> { c.Area }, // Adaptado a la relación 1:1
+                    AreaDescripcion = c.AreaNavigation.NombreArea,
                     StatusDescripcion = c.StatusNavigation.Estado,
                     ComunidadDescripcion = c.ComunidadNavigation.NombreComunidad,
                     ImportanciaDescripcion = c.ImportanciaNavigation.Nivel
@@ -46,49 +63,36 @@ namespace OficialiaCrudAPI.Services
 
         public async Task<bool> RegistrarCorrespondencia(CorrespondenciaDto correspondenciaDto)
         {
-            // Verificar si todas las áreas existen
-            foreach (var areaId in correspondenciaDto.Area)
+            var areaExiste = await _context.Area.AnyAsync(a => a.IdArea == correspondenciaDto.Area.FirstOrDefault());
+            if (!areaExiste)
             {
-                var areaExiste = await _context.Area.AnyAsync(a => a.IdArea == areaId);
-                if (!areaExiste)
-                {
-                    throw new Exception($"El área con id {areaId} no existe.");
-                }
+                throw new Exception($"El área con id {correspondenciaDto.Area.FirstOrDefault()} no existe.");
             }
 
-            // Crear una nueva correspondencia para cada área
-            foreach (var areaId in correspondenciaDto.Area)
+            var nuevaCorrespondencia = new Correspondencias
             {
-                var nuevaCorrespondencia = new Correspondencias
-                {
-                    Id = correspondenciaDto.Id,
-                    Folio = correspondenciaDto.Folio,
-                    Fecha = correspondenciaDto.Fecha,
-                    Dependencia = correspondenciaDto.Dependencia,
-                    Asunto = correspondenciaDto.Asunto,
-                    Remitente = correspondenciaDto.Remitente,
-                    Destinatario = correspondenciaDto.Destinatario,
-                    Comunidad = correspondenciaDto.Comunidad,
-                    CargoRemitente = correspondenciaDto.CargoRemitente,
-                    CargoDestinatario = correspondenciaDto.CargoDestinatario,
-                    Area = areaId,  // Asignamos el área correspondiente de la lista
-                    Documento = correspondenciaDto.Documento,
-                    Status = correspondenciaDto.Status,
-                    Importancia = correspondenciaDto.Importancia
-                };
+                Folio = correspondenciaDto.Folio,
+                Fecha = correspondenciaDto.Fecha,
+                Dependencia = correspondenciaDto.Dependencia,
+                Asunto = correspondenciaDto.Asunto,
+                Remitente = correspondenciaDto.Remitente,
+                Destinatario = correspondenciaDto.Destinatario,
+                Comunidad = correspondenciaDto.Comunidad,
+                CargoRemitente = correspondenciaDto.CargoRemitente,
+                CargoDestinatario = correspondenciaDto.CargoDestinatario,
+                Documento = correspondenciaDto.Documento,
+                Status = correspondenciaDto.Status,
+                Importancia = correspondenciaDto.Importancia,
+                Area = correspondenciaDto.Area.FirstOrDefault() // Asignación del área única
+            };
 
-                _context.Correspondencia.Add(nuevaCorrespondencia);
-            }
-
-            // Guardamos los cambios al contexto
+            _context.Correspondencia.Add(nuevaCorrespondencia);
             return await _context.SaveChangesAsync() > 0;
         }
 
         public async Task<bool> EliminarCorrespondencia(int id)
         {
-            var correspondencia = await _context.Correspondencia
-                .FirstOrDefaultAsync(c => c.Id == id);
-
+            var correspondencia = await _context.Correspondencia.FindAsync(id);
             if (correspondencia == null)
             {
                 return false;
@@ -101,14 +105,12 @@ namespace OficialiaCrudAPI.Services
 
         public async Task<bool> EditarCorrespondencia(CorrespondenciaDto correspondenciaDto)
         {
-            var correspondencia = await _context.Correspondencia
-                .FirstOrDefaultAsync(c => c.Id == correspondenciaDto.Id);
+            var correspondencia = await _context.Correspondencia.FindAsync(correspondenciaDto.Id);
             if (correspondencia == null)
             {
                 return false;
             }
 
-            correspondencia.Id = correspondenciaDto.Id;
             correspondencia.Folio = correspondenciaDto.Folio;
             correspondencia.Fecha = correspondenciaDto.Fecha;
             correspondencia.Dependencia = correspondenciaDto.Dependencia;
@@ -118,14 +120,20 @@ namespace OficialiaCrudAPI.Services
             correspondencia.Comunidad = correspondenciaDto.Comunidad;
             correspondencia.CargoRemitente = correspondenciaDto.CargoRemitente;
             correspondencia.CargoDestinatario = correspondenciaDto.CargoDestinatario;
-            correspondencia.Area = correspondenciaDto.Area.FirstOrDefault(); 
             correspondencia.Documento = correspondenciaDto.Documento;
             correspondencia.Status = correspondenciaDto.Status;
             correspondencia.Importancia = correspondenciaDto.Importancia;
+            correspondencia.Area = correspondenciaDto.Area.FirstOrDefault(); // Actualizar el área
 
             await _context.SaveChangesAsync();
             return true;
         }
 
+        public async Task<int> ObtenerNuevasCorrespondencias(DateTime ultimaFecha)
+        {
+            return await _context.Correspondencia
+                .Where(c => c.Fecha > ultimaFecha)
+                .CountAsync();
+        }
     }
 }

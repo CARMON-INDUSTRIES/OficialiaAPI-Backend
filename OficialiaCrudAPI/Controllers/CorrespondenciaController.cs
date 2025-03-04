@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OficialiaCrudAPI.Interfaces;
 using OficialiaCrudAPI.Services;
+using System;
+using System.Threading.Tasks;
 
 namespace OficialiaCrudAPI.Controllers
 {
@@ -24,7 +26,6 @@ namespace OficialiaCrudAPI.Controllers
             _statusService = statusService;
         }
 
- 
         [HttpOptions("registrar")]
         public IActionResult RegistrarOptions()
         {
@@ -35,9 +36,9 @@ namespace OficialiaCrudAPI.Controllers
         }
 
         [HttpGet("obtener")]
-        public async Task<IActionResult> ObtenerCorrespondencias()
+        public async Task<IActionResult> ObtenerCorrespondencias(string userId)
         {
-            var datos = await _service.ObtenerCorrespondencias();
+            var datos = await _service.ObtenerCorrespondencias(userId);
             return Ok(datos);
         }
 
@@ -65,7 +66,6 @@ namespace OficialiaCrudAPI.Controllers
                 return StatusCode(500, $"Error interno: {ex.Message}");
             }
         }
-
 
         [HttpGet("obtener-comunidades")]
         public async Task<IActionResult> ObtenerComunidades()
@@ -115,7 +115,6 @@ namespace OficialiaCrudAPI.Controllers
             return Ok(area);
         }
 
-
         [HttpDelete("eliminar/{id}")]
         public async Task<IActionResult> EliminarCorrespondencia(int id)
         {
@@ -145,6 +144,14 @@ namespace OficialiaCrudAPI.Controllers
             }
 
             return Ok(new { mensaje = "Correspondencia actualizada exitosamente" });
+        }
+
+        // 📌 Nuevo endpoint para obtener nuevas correspondencias
+        [HttpGet("nuevasCorrespondencias/{ultimaFecha}")]
+        public async Task<IActionResult> ObtenerNuevasCorrespondencias(DateTime ultimaFecha)
+        {
+            var nuevasCorrespondencias = await _service.ObtenerNuevasCorrespondencias(ultimaFecha);
+            return Ok(new { nuevasCorrespondencias });
         }
     }
 }

@@ -119,6 +119,18 @@ namespace OficialiaCrudAPI.Controllers
             }
         }
 
+        [HttpGet("GetUserId/{userName}")]
+        public async Task<IActionResult> GetUserId(string userName)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+
+            if (user == null)
+            {
+                return NotFound(new { mensaje = "No se encontró el usuario con el nombre proporcionado." });
+            }
+
+            return Ok(new { UserId = user.Id });
+        }
 
         private string GenerateJwtToken(IdentityUser user)
         {
