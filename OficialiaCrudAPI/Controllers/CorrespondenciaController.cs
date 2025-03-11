@@ -165,7 +165,24 @@ namespace OficialiaCrudAPI.Controllers
             return Ok(new { mensaje = "Correspondencia actualizada exitosamente" });
         }
 
-        
+        public class ActualizarEstadoDto
+        {
+            public int Status { get; set; }
+        }
+
+        [HttpPut("actualizar-estado/{id}")]
+        public async Task<IActionResult> ActualizarEstadoCorrespondencia(int id, [FromBody] ActualizarEstadoDto dto)
+        {
+            var resultado = await _service.ActualizarEstadoCorrespondencia(id, dto.Status);
+            if (!resultado)
+            {
+                return NotFound(new { mensaje = "Correspondencia no encontrada" });
+            }
+
+            return Ok(new { mensaje = "Estado actualizado correctamente" });
+        }
+
+
         [HttpGet("nuevasCorrespondencias/{ultimaFecha}")]
         public async Task<IActionResult> ObtenerNuevasCorrespondencias(DateTime ultimaFecha)
         {

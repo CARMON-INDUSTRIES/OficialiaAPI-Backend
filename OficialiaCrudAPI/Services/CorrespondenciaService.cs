@@ -138,6 +138,21 @@ namespace OficialiaCrudAPI.Services
             return true;
         }
 
+        public async Task<bool> ActualizarEstadoCorrespondencia(int id, int nuevoStatus)
+        {
+            var correspondencia = await _context.Correspondencia.FindAsync(id);
+            if (correspondencia == null)
+            {
+                return false; // No se encontró la correspondencia
+            }
+
+            correspondencia.Status = nuevoStatus;
+            _context.Correspondencia.Update(correspondencia);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
         public async Task<List<CorrespondenciaDto>> ObtenerTodasLasCorrespondencias()
         {
             var correspondencias = await _context.Correspondencia

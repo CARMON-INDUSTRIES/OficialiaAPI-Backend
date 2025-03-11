@@ -10,6 +10,7 @@ namespace OficialiaCrudAPI.Interfaces
         Task<bool> EditarCorrespondencia(CorrespondenciaDto correspondenciaDto);
         Task<int> ObtenerNuevasCorrespondencias(DateTime ultimaFecha);
         Task<List<CorrespondenciaDto>> ObtenerTodasLasCorrespondencias();
+        Task<bool> ActualizarEstadoCorrespondencia(int id, int nuevoStatus);
 
     }
 }
