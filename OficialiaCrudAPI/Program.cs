@@ -78,6 +78,8 @@ builder.Services.AddScoped<IAreaService, AreaService>();
 builder.Services.AddScoped<IImportanciaService, ImportanciaService>();
 builder.Services.AddScoped<IStatusService, StatusService>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+builder.Services.AddScoped<IRespuesta, RespuestaService>();
+
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.

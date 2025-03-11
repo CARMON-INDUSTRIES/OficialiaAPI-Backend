@@ -1,4 +1,6 @@
-﻿namespace OficialiaCrudAPI.Interfaces
+﻿using OficialiaCrudAPI.Models;
+
+namespace OficialiaCrudAPI.Interfaces
 {
     public interface ICorrespondenciaService
     {
@@ -7,6 +9,7 @@
         Task<bool> EliminarCorrespondencia(int id);
         Task<bool> EditarCorrespondencia(CorrespondenciaDto correspondenciaDto);
         Task<int> ObtenerNuevasCorrespondencias(DateTime ultimaFecha);
+        Task<List<CorrespondenciaDto>> ObtenerTodasLasCorrespondencias();
 
     }
 }

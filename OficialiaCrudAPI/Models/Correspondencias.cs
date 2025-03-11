@@ -26,6 +26,14 @@ namespace OficialiaCrudAPI.Models
 
         public string Documento { get; set; }
 
+        public string? Respuesta { get; set; }
+
+        public int? RespuestaCorrecta { get; set; }
+        [ForeignKey("RespuestaCorrecta")]
+        public virtual Respuesta? Respuestas { get; set; }
+
+        public DateTime? FechaTerminacion { get; set; }
+
 
         [ForeignKey("AreaNavigation")]
         public int Area { get; set; }

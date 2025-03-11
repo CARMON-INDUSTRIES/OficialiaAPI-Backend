@@ -2,6 +2,7 @@
 using OficialiaCrudAPI.Data;
 using OficialiaCrudAPI.DTO;
 using OficialiaCrudAPI.Interfaces;
+using OficialiaCrudAPI.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -52,5 +53,11 @@ namespace OficialiaCrudAPI.Services
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<IEnumerable<Correspondencias>> ObtenerTodasLasCorrespondencias()
+        {
+            return await _context.Correspondencia.ToListAsync();
+        }
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using OficialiaCrudAPI.Interfaces;
 using OficialiaCrudAPI.Services;
 using System;
@@ -15,15 +16,19 @@ namespace OficialiaCrudAPI.Controllers
         private readonly IAreaService _areaService;
         private readonly IImportanciaService _importanciaService;
         private readonly IStatusService _statusService;
+        private readonly UserManager<IdentityUser> _userManager;
+
 
         public CorrespondenciaController(ICorrespondenciaService service, IComunidadesService comunidadesService
-            , IAreaService areaService, IImportanciaService importanciaService, IStatusService statusService)
+            , IAreaService areaService, IImportanciaService importanciaService, IStatusService statusService, UserManager<IdentityUser> userManager)
         {
             _service = service;
             _comunidadesService = comunidadesService;
             _areaService = areaService;
             _importanciaService = importanciaService;
             _statusService = statusService;
+            _userManager = userManager;
+
         }
 
         [HttpOptions("registrar")]
@@ -38,9 +43,23 @@ namespace OficialiaCrudAPI.Controllers
         [HttpGet("obtener")]
         public async Task<IActionResult> ObtenerCorrespondencias(string userId)
         {
-            var datos = await _service.ObtenerCorrespondencias(userId);
+            var usuario = await _userManager.FindByIdAsync(userId);
+            if (usuario == null)
+            {
+                return NotFound(new { mensaje = "Usuario no encontrado." });
+            }
+
+            // Verifica si el usuario es SuperAdmin
+            var roles = await _userManager.GetRolesAsync(usuario);
+            bool esSuperAdmin = roles.Contains("SuperAdmin");
+
+            var datos = esSuperAdmin
+                ? await _service.ObtenerTodasLasCorrespondencias() // Obtiene todo si es SuperAdmin
+                : await _service.ObtenerCorrespondencias(userId); // Obtiene solo las del área del usuario
+
             return Ok(datos);
         }
+
 
         [HttpPost("registrar")]
         public async Task<IActionResult> RegistrarCorrespondencia([FromBody] CorrespondenciaDto correspondenciaDto)
@@ -146,7 +165,7 @@ namespace OficialiaCrudAPI.Controllers
             return Ok(new { mensaje = "Correspondencia actualizada exitosamente" });
         }
 
-        // 📌 Nuevo endpoint para obtener nuevas correspondencias
+        
         [HttpGet("nuevasCorrespondencias/{ultimaFecha}")]
         public async Task<IActionResult> ObtenerNuevasCorrespondencias(DateTime ultimaFecha)
         {

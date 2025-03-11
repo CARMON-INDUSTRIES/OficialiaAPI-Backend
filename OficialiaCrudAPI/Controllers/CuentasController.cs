@@ -52,6 +52,12 @@ namespace OficialiaCrudAPI.Controllers
                     await _roleManager.CreateAsync(new IdentityRole("User"));
                 }
 
+                if (!await _roleManager.RoleExistsAsync("SuperAdmin"))
+                {
+                    await _roleManager.CreateAsync(new IdentityRole("SuperAdmin"));
+                }
+
+
                 var anyUsers = _userManager.Users.Count();
 
                 if (anyUsers == 1)
@@ -62,8 +68,12 @@ namespace OficialiaCrudAPI.Controllers
                 {
                     await _userManager.AddToRoleAsync(user, "User");
                 }
+                //else
+                //{
+                //    await _userManager.AddToRoleAsync(user, "SuperAdmin");
+                //}
 
-                return Ok(new { Status = "Success", Message = "Usuario registrado!", UserId = user.Id });
+                    return Ok(new { Status = "Success", Message = "Usuario registrado!", UserId = user.Id });
             }
 
             return BadRequest(new { Status = "Error", Message = "Error, fallo al registrar!", Errors = result.Errors });

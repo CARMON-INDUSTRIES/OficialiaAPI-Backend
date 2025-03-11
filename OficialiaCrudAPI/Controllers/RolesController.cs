@@ -20,7 +20,7 @@ public class RolesController : ControllerBase
     [HttpPost("AsignarRol")]
     public async Task<IActionResult> AsignarRol([FromBody] AsignarRolRequest request)
     {
-        var user = await _userManager.FindByEmailAsync(request.Email);
+        var user = await _userManager.FindByNameAsync(request.UserName);
         if (user == null)
         {
             return NotFound(new { mensaje = "Usuario no encontrado." });
@@ -39,7 +39,7 @@ public class RolesController : ControllerBase
         var result = await _userManager.AddToRoleAsync(user, request.Role);
         if (result.Succeeded)
         {
-            return Ok(new { mensaje = $"Rol '{request.Role}' asignado a '{request.Email}' correctamente." });
+            return Ok(new { mensaje = $"Rol '{request.Role}' asignado a '{request.UserName}' correctamente." });
         }
 
         return BadRequest(new { mensaje = "Error al asignar el rol.", errores = result.Errors });
@@ -48,7 +48,7 @@ public class RolesController : ControllerBase
     [HttpPost("QuitarRol")]
     public async Task<IActionResult> QuitarRol([FromBody] QuitarRolRequest request)
     {
-        var user = await _userManager.FindByEmailAsync(request.Email);
+        var user = await _userManager.FindByNameAsync(request.UserName);
         if (user == null)
         {
             return NotFound(new { mensaje = "Usuario no encontrado." });
@@ -62,7 +62,7 @@ public class RolesController : ControllerBase
         var result = await _userManager.RemoveFromRoleAsync(user, request.Role);
         if (result.Succeeded)
         {
-            return Ok(new { mensaje = $"Rol '{request.Role}' eliminado de '{request.Email}' correctamente." });
+            return Ok(new { mensaje = $"Rol '{request.Role}' eliminado de '{request.UserName}' correctamente." });
         }
 
         return BadRequest(new { mensaje = "Error al quitar el rol.", errores = result.Errors });
@@ -100,13 +100,13 @@ public class RolesController : ControllerBase
 
 public class AsignarRolRequest
 {
-    public string Email { get; set; }
+    public string UserName { get; set; }
     public string Role { get; set; }
 }
 
 
 public class QuitarRolRequest
 {
-    public string Email { get; set; }
+    public string UserName { get; set; }
     public string Role { get; set; }
 }

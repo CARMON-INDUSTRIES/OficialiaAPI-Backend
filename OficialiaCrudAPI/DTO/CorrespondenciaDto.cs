@@ -19,4 +19,7 @@
     public int Importancia { get; set; }
     public string? ImportanciaDescripcion { get; set; }
     public string? ComunidadDescripcion { get; set; }
+    public int? RespuestaCorrecta { get; set; }
+    public string? Respuesta { get; set; }
+    public DateTime? FechaTerminacion { get; set; }
 }

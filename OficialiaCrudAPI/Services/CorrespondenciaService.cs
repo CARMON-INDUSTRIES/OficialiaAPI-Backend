@@ -52,6 +52,9 @@ namespace OficialiaCrudAPI.Services
                     Documento = c.Documento,
                     Status = c.Status,
                     Importancia = c.Importancia,
+                    RespuestaCorrecta = c.RespuestaCorrecta,
+                    FechaTerminacion = c.FechaTerminacion,
+                    Respuesta = c.Respuesta,
                     Area = new List<int> { c.Area }, // Adaptado a la relación 1:1
                     AreaDescripcion = c.AreaNavigation.NombreArea,
                     StatusDescripcion = c.StatusNavigation.Estado,
@@ -83,6 +86,9 @@ namespace OficialiaCrudAPI.Services
                 Documento = correspondenciaDto.Documento,
                 Status = correspondenciaDto.Status,
                 Importancia = correspondenciaDto.Importancia,
+                RespuestaCorrecta = correspondenciaDto.RespuestaCorrecta,
+                FechaTerminacion = correspondenciaDto.FechaTerminacion,
+                Respuesta = correspondenciaDto.Respuesta,
                 Area = correspondenciaDto.Area.FirstOrDefault() // Asignación del área única
             };
 
@@ -123,11 +129,50 @@ namespace OficialiaCrudAPI.Services
             correspondencia.Documento = correspondenciaDto.Documento;
             correspondencia.Status = correspondenciaDto.Status;
             correspondencia.Importancia = correspondenciaDto.Importancia;
+            correspondencia.RespuestaCorrecta = correspondenciaDto.RespuestaCorrecta;
+            correspondencia.FechaTerminacion = correspondenciaDto.FechaTerminacion;
+            correspondencia.Respuesta = correspondenciaDto.Respuesta;
             correspondencia.Area = correspondenciaDto.Area.FirstOrDefault(); // Actualizar el área
 
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<List<CorrespondenciaDto>> ObtenerTodasLasCorrespondencias()
+        {
+            var correspondencias = await _context.Correspondencia
+                .Include(c => c.AreaNavigation)
+                .Include(c => c.ComunidadNavigation)
+                .Include(c => c.ImportanciaNavigation)
+                .Include(c => c.StatusNavigation)
+                .ToListAsync();
+
+            return correspondencias.Select(c => new CorrespondenciaDto
+            {
+                Id = c.Id,
+                Folio = c.Folio,
+                Fecha = c.Fecha,
+                Dependencia = c.Dependencia,
+                Asunto = c.Asunto,
+                Remitente = c.Remitente,
+                Destinatario = c.Destinatario,
+                Comunidad = c.Comunidad,
+                CargoRemitente = c.CargoRemitente,
+                CargoDestinatario = c.CargoDestinatario,
+                Documento = c.Documento,
+                Status = c.Status,
+                Importancia = c.Importancia,
+                RespuestaCorrecta = c.RespuestaCorrecta,
+                FechaTerminacion = c.FechaTerminacion,
+                Respuesta = c.Respuesta,
+                Area = new List<int> { c.Area }, // Adaptado a la relación 1:1
+                AreaDescripcion = c.AreaNavigation.NombreArea,
+                StatusDescripcion = c.StatusNavigation.Estado,
+                ComunidadDescripcion = c.ComunidadNavigation.NombreComunidad,
+                ImportanciaDescripcion = c.ImportanciaNavigation.Nivel
+            }).ToList();
+        }
+
 
         public async Task<int> ObtenerNuevasCorrespondencias(DateTime ultimaFecha)
         {
