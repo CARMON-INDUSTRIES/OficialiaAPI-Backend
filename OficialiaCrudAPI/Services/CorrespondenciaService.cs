@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OficialiaCrudAPI.Data;
+using OficialiaCrudAPI.DTO;
 using OficialiaCrudAPI.Interfaces;
 using OficialiaCrudAPI.Models;
 using System.Collections.Generic;
@@ -64,37 +65,57 @@ namespace OficialiaCrudAPI.Services
                 .ToListAsync();
         }
 
+        public async Task<List<FormularioAreaDestinoDto>> ObtenerAsignaciones()
+        {
+            return await _context.FormularioAreaDestino
+                .Select(fa => new FormularioAreaDestinoDto
+                {
+                    Id = fa.Id,
+                    CorrespondenciaId = fa.CorrespondenciaId,
+                    AreaId = fa.AreaId
+                })
+                .ToListAsync();
+        }
+
         public async Task<bool> RegistrarCorrespondencia(CorrespondenciaDto correspondenciaDto)
         {
-            var areaExiste = await _context.Area.AnyAsync(a => a.IdArea == correspondenciaDto.Area.FirstOrDefault());
+            var areaExiste = await _context.Area.AnyAsync(a => correspondenciaDto.Area.Contains(a.IdArea));
             if (!areaExiste)
             {
-                throw new Exception($"El área con id {correspondenciaDto.Area.FirstOrDefault()} no existe.");
+                throw new Exception($"Una de las áreas proporcionadas no existe.");
             }
 
-            var nuevaCorrespondencia = new Correspondencias
-            {
-                Folio = correspondenciaDto.Folio,
-                Fecha = correspondenciaDto.Fecha,
-                Dependencia = correspondenciaDto.Dependencia,
-                Asunto = correspondenciaDto.Asunto,
-                Remitente = correspondenciaDto.Remitente,
-                Destinatario = correspondenciaDto.Destinatario,
-                Comunidad = correspondenciaDto.Comunidad,
-                CargoRemitente = correspondenciaDto.CargoRemitente,
-                CargoDestinatario = correspondenciaDto.CargoDestinatario,
-                Documento = correspondenciaDto.Documento,
-                Status = correspondenciaDto.Status,
-                Importancia = correspondenciaDto.Importancia,
-                RespuestaCorrecta = correspondenciaDto.RespuestaCorrecta,
-                FechaTerminacion = correspondenciaDto.FechaTerminacion,
-                Respuesta = correspondenciaDto.Respuesta,
-                Area = correspondenciaDto.Area.FirstOrDefault() // Asignación del área única
-            };
+            var correspondencias = new List<Correspondencias>();
 
-            _context.Correspondencia.Add(nuevaCorrespondencia);
+            foreach (var areaId in correspondenciaDto.Area)
+            {
+                var nuevaCorrespondencia = new Correspondencias
+                {
+                    Folio = correspondenciaDto.Folio,
+                    Fecha = correspondenciaDto.Fecha,
+                    Dependencia = correspondenciaDto.Dependencia,
+                    Asunto = correspondenciaDto.Asunto,
+                    Remitente = correspondenciaDto.Remitente,
+                    Destinatario = correspondenciaDto.Destinatario,
+                    Comunidad = correspondenciaDto.Comunidad,
+                    CargoRemitente = correspondenciaDto.CargoRemitente,
+                    CargoDestinatario = correspondenciaDto.CargoDestinatario,
+                    Documento = correspondenciaDto.Documento,
+                    Status = correspondenciaDto.Status,
+                    Importancia = correspondenciaDto.Importancia,
+                    RespuestaCorrecta = correspondenciaDto.RespuestaCorrecta,
+                    FechaTerminacion = correspondenciaDto.FechaTerminacion,
+                    Respuesta = correspondenciaDto.Respuesta,
+                    Area = areaId // Asignación del área correspondiente en cada ciclo
+                };
+
+                correspondencias.Add(nuevaCorrespondencia);
+            }
+
+            _context.Correspondencia.AddRange(correspondencias);
             return await _context.SaveChangesAsync() > 0;
         }
+
 
         public async Task<bool> EliminarCorrespondencia(int id)
         {

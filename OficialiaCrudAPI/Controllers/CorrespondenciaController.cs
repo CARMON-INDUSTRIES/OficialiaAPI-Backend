@@ -134,6 +134,13 @@ namespace OficialiaCrudAPI.Controllers
             return Ok(area);
         }
 
+        [HttpGet("obtener-asignaciones")]
+        public async Task<IActionResult> ObtenerAsignaciones()
+        {
+            var asignaciones = await _service.ObtenerAsignaciones();
+            return Ok(asignaciones);
+        }
+
         [HttpDelete("eliminar/{id}")]
         public async Task<IActionResult> EliminarCorrespondencia(int id)
         {

@@ -1,4 +1,5 @@
-﻿using OficialiaCrudAPI.Models;
+﻿using OficialiaCrudAPI.DTO;
+using OficialiaCrudAPI.Models;
 
 namespace OficialiaCrudAPI.Interfaces
 {
@@ -11,6 +12,8 @@ namespace OficialiaCrudAPI.Interfaces
         Task<int> ObtenerNuevasCorrespondencias(DateTime ultimaFecha);
         Task<List<CorrespondenciaDto>> ObtenerTodasLasCorrespondencias();
         Task<bool> ActualizarEstadoCorrespondencia(int id, int nuevoStatus);
+        Task<List<FormularioAreaDestinoDto>> ObtenerAsignaciones();
+
 
     }
 }
