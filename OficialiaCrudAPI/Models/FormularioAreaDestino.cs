@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace OficialiaCrudAPI.Models
 {
@@ -6,10 +7,15 @@ namespace OficialiaCrudAPI.Models
     {
         [Key]
         public int Id { get; set; }
-        public string CorrespondenciaId { get; set; }
+
+        public int CorrespondenciaId { get; set; }
+
+        [ForeignKey("CorrespondenciaId")]
+        public Correspondencias Correspondencia { get; set; }
+
         public int AreaId { get; set; }
 
-        public Correspondencias Correspondencia { get; set; }
+        [ForeignKey("AreaId")]
         public Area Area { get; set; }
     }
 }

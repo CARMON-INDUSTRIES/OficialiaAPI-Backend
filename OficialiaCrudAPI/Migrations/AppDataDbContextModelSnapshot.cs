@@ -220,7 +220,41 @@ namespace OficialiaCrudAPI.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("OficialiaCrudAPI.Models.Registros", b =>
+            modelBuilder.Entity("OficialiaCrudAPI.Models.Area", b =>
+                {
+                    b.Property<int>("IdArea")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdArea"));
+
+                    b.Property<string>("NombreArea")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("IdArea");
+
+                    b.ToTable("Area");
+                });
+
+            modelBuilder.Entity("OficialiaCrudAPI.Models.Comunidades", b =>
+                {
+                    b.Property<int>("IdComunidad")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdComunidad"));
+
+                    b.Property<string>("NombreComunidad")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("IdComunidad");
+
+                    b.ToTable("Comunidades");
+                });
+
+            modelBuilder.Entity("OficialiaCrudAPI.Models.Correspondencias", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -228,15 +262,29 @@ namespace OficialiaCrudAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AreaDestino")
+                    b.Property<int>("Area")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Asunto")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Comunidad")
+                    b.Property<string>("CargoDestinatario")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CargoRemitente")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Comunidad")
+                        .HasColumnType("int");
 
                     b.Property<string>("Dependencia")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Destinatario")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -244,36 +292,107 @@ namespace OficialiaCrudAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("FechaDocumento")
+                    b.Property<DateTime>("Fecha")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("FechaRegistro")
+                    b.Property<DateTime?>("FechaTerminacion")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Folio")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Folio")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Importancia")
+                        .HasColumnType("int");
 
                     b.Property<string>("Remitente")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Solicitante")
-                        .IsRequired()
+                    b.Property<string>("Respuesta")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("RespuestaCorrecta")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Registros");
+                    b.HasIndex("Area");
+
+                    b.HasIndex("Comunidad");
+
+                    b.HasIndex("Importancia");
+
+                    b.HasIndex("RespuestaCorrecta");
+
+                    b.HasIndex("Status");
+
+                    b.ToTable("Correspondencia");
                 });
 
-            modelBuilder.Entity("OficialiaCrudAPI.Models.Usuario", b =>
+            modelBuilder.Entity("OficialiaCrudAPI.Models.FormularioAreaDestino", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AreaId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CorrespondenciaId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AreaId");
+
+                    b.HasIndex("CorrespondenciaId");
+
+                    b.ToTable("FormularioAreaDestino");
+                });
+
+            modelBuilder.Entity("OficialiaCrudAPI.Models.Importancia", b =>
+                {
+                    b.Property<int>("IdImportancia")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdImportancia"));
+
+                    b.Property<string>("Nivel")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("IdImportancia");
+
+                    b.ToTable("Importancia");
+                });
+
+            modelBuilder.Entity("OficialiaCrudAPI.Models.Status", b =>
+                {
+                    b.Property<int>("IdStatus")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdStatus"));
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("IdStatus");
+
+                    b.ToTable("Status");
+                });
+
+            modelBuilder.Entity("OficialiaCrudAPI.Models.Usuario", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -292,7 +411,47 @@ namespace OficialiaCrudAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Students");
+                    b.ToTable("Student");
+                });
+
+            modelBuilder.Entity("OficialiaCrudAPI.Models.UsuarioArea", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AreaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UsuarioArea");
+                });
+
+            modelBuilder.Entity("Respuesta", b =>
+                {
+                    b.Property<int>("IdRespuesta")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdRespuesta"));
+
+                    b.Property<string>("DocumentoRespuesta")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Mensaje")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("IdRespuesta");
+
+                    b.ToTable("Respuesta");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -344,6 +503,90 @@ namespace OficialiaCrudAPI.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("OficialiaCrudAPI.Models.Correspondencias", b =>
+                {
+                    b.HasOne("OficialiaCrudAPI.Models.Area", "AreaNavigation")
+                        .WithMany("Correspondencias")
+                        .HasForeignKey("Area")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_correspondencia_area");
+
+                    b.HasOne("OficialiaCrudAPI.Models.Comunidades", "ComunidadNavigation")
+                        .WithMany("Correspondencias")
+                        .HasForeignKey("Comunidad")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_correspondencia_comunidad");
+
+                    b.HasOne("OficialiaCrudAPI.Models.Importancia", "ImportanciaNavigation")
+                        .WithMany("Correspondencias")
+                        .HasForeignKey("Importancia")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_correspondencia_importancia");
+
+                    b.HasOne("Respuesta", "Respuestas")
+                        .WithMany()
+                        .HasForeignKey("RespuestaCorrecta");
+
+                    b.HasOne("OficialiaCrudAPI.Models.Status", "StatusNavigation")
+                        .WithMany("Correspondencias")
+                        .HasForeignKey("Status")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_correspondencia_status");
+
+                    b.Navigation("AreaNavigation");
+
+                    b.Navigation("ComunidadNavigation");
+
+                    b.Navigation("ImportanciaNavigation");
+
+                    b.Navigation("Respuestas");
+
+                    b.Navigation("StatusNavigation");
+                });
+
+            modelBuilder.Entity("OficialiaCrudAPI.Models.FormularioAreaDestino", b =>
+                {
+                    b.HasOne("OficialiaCrudAPI.Models.Area", "Area")
+                        .WithMany()
+                        .HasForeignKey("AreaId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("OficialiaCrudAPI.Models.Correspondencias", "Correspondencia")
+                        .WithMany()
+                        .HasForeignKey("CorrespondenciaId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Area");
+
+                    b.Navigation("Correspondencia");
+                });
+
+            modelBuilder.Entity("OficialiaCrudAPI.Models.Area", b =>
+                {
+                    b.Navigation("Correspondencias");
+                });
+
+            modelBuilder.Entity("OficialiaCrudAPI.Models.Comunidades", b =>
+                {
+                    b.Navigation("Correspondencias");
+                });
+
+            modelBuilder.Entity("OficialiaCrudAPI.Models.Importancia", b =>
+                {
+                    b.Navigation("Correspondencias");
+                });
+
+            modelBuilder.Entity("OficialiaCrudAPI.Models.Status", b =>
+                {
+                    b.Navigation("Correspondencias");
                 });
 #pragma warning restore 612, 618
         }

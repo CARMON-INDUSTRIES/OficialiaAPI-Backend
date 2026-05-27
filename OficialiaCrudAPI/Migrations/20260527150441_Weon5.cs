@@ -6,11 +6,24 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace OficialiaCrudAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class close : Migration
+    public partial class Weon5 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Area",
+                columns: table => new
+                {
+                    IdArea = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NombreArea = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Area", x => x.IdArea);
+                });
+
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -51,32 +64,63 @@ namespace OficialiaCrudAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Registros",
+                name: "Comunidades",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    IdComunidad = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Folio = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FechaDocumento = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Dependencia = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Comunidad = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Remitente = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Solicitante = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Documento = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AreaDestino = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FechaRegistro = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    NombreComunidad = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Registros", x => x.Id);
+                    table.PrimaryKey("PK_Comunidades", x => x.IdComunidad);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Students",
+                name: "Importancia",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    IdImportancia = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Nivel = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Importancia", x => x.IdImportancia);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Respuesta",
+                columns: table => new
+                {
+                    IdRespuesta = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Mensaje = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DocumentoRespuesta = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Respuesta", x => x.IdRespuesta);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Status",
+                columns: table => new
+                {
+                    IdStatus = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Estado = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Status", x => x.IdStatus);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Student",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Semester = table.Column<int>(type: "int", nullable: false),
@@ -84,7 +128,21 @@ namespace OficialiaCrudAPI.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Students", x => x.Id);
+                    table.PrimaryKey("PK_Student", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UsuarioArea",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AreaId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UsuarioArea", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -193,6 +251,90 @@ namespace OficialiaCrudAPI.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Correspondencia",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Folio = table.Column<int>(type: "int", nullable: false),
+                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Dependencia = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Remitente = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CargoRemitente = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Asunto = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Destinatario = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CargoDestinatario = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Documento = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Respuesta = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RespuestaCorrecta = table.Column<int>(type: "int", nullable: true),
+                    FechaTerminacion = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Area = table.Column<int>(type: "int", nullable: false),
+                    Comunidad = table.Column<int>(type: "int", nullable: false),
+                    Importancia = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Correspondencia", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Correspondencia_Respuesta_RespuestaCorrecta",
+                        column: x => x.RespuestaCorrecta,
+                        principalTable: "Respuesta",
+                        principalColumn: "IdRespuesta");
+                    table.ForeignKey(
+                        name: "FK_correspondencia_area",
+                        column: x => x.Area,
+                        principalTable: "Area",
+                        principalColumn: "IdArea",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_correspondencia_comunidad",
+                        column: x => x.Comunidad,
+                        principalTable: "Comunidades",
+                        principalColumn: "IdComunidad",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_correspondencia_importancia",
+                        column: x => x.Importancia,
+                        principalTable: "Importancia",
+                        principalColumn: "IdImportancia",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_correspondencia_status",
+                        column: x => x.Status,
+                        principalTable: "Status",
+                        principalColumn: "IdStatus",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FormularioAreaDestino",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CorrespondenciaId = table.Column<int>(type: "int", nullable: false),
+                    AreaId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FormularioAreaDestino", x => x.Id);
+                    table.ForeignKey(
+                         name: "FK_FormularioAreaDestino_Area_AreaId",
+                        column: x => x.AreaId,
+                        principalTable: "Area",
+                        principalColumn: "IdArea",
+                        onDelete: ReferentialAction.Restrict);
+
+                    table.ForeignKey(
+                        name: "FK_FormularioAreaDestino_Correspondencia_CorrespondenciaId",
+                        column: x => x.CorrespondenciaId,
+                        principalTable: "Correspondencia",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -231,6 +373,41 @@ namespace OficialiaCrudAPI.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Correspondencia_Area",
+                table: "Correspondencia",
+                column: "Area");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Correspondencia_Comunidad",
+                table: "Correspondencia",
+                column: "Comunidad");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Correspondencia_Importancia",
+                table: "Correspondencia",
+                column: "Importancia");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Correspondencia_RespuestaCorrecta",
+                table: "Correspondencia",
+                column: "RespuestaCorrecta");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Correspondencia_Status",
+                table: "Correspondencia",
+                column: "Status");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FormularioAreaDestino_AreaId",
+                table: "FormularioAreaDestino",
+                column: "AreaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FormularioAreaDestino_CorrespondenciaId",
+                table: "FormularioAreaDestino",
+                column: "CorrespondenciaId");
         }
 
         /// <inheritdoc />
@@ -252,16 +429,37 @@ namespace OficialiaCrudAPI.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Registros");
+                name: "FormularioAreaDestino");
 
             migrationBuilder.DropTable(
-                name: "Students");
+                name: "Student");
+
+            migrationBuilder.DropTable(
+                name: "UsuarioArea");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Correspondencia");
+
+            migrationBuilder.DropTable(
+                name: "Respuesta");
+
+            migrationBuilder.DropTable(
+                name: "Area");
+
+            migrationBuilder.DropTable(
+                name: "Comunidades");
+
+            migrationBuilder.DropTable(
+                name: "Importancia");
+
+            migrationBuilder.DropTable(
+                name: "Status");
         }
     }
 }

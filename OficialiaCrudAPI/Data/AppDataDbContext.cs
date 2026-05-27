@@ -27,29 +27,41 @@ namespace OficialiaCrudAPI.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Correspondencias>()
-                .HasOne(c => c.AreaNavigation) // Una correspondencia tiene una sola área
-                .WithMany(a => a.Correspondencias) // Un área puede tener muchas correspondencias
-                .HasForeignKey(c => c.Area) // Llave foránea en Correspondencia
+                .HasOne(c => c.AreaNavigation)
+                .WithMany(a => a.Correspondencias)
+                .HasForeignKey(c => c.Area)
                 .HasConstraintName("FK_correspondencia_area");
 
             modelBuilder.Entity<Correspondencias>()
-                .HasOne(c => c.ComunidadNavigation) 
-                .WithMany(com => com.Correspondencias) 
-                .HasForeignKey(c => c.Comunidad) 
+                .HasOne(c => c.ComunidadNavigation)
+                .WithMany(com => com.Correspondencias)
+                .HasForeignKey(c => c.Comunidad)
                 .HasConstraintName("FK_correspondencia_comunidad");
 
             modelBuilder.Entity<Correspondencias>()
-               .HasOne(c => c.ImportanciaNavigation)
-               .WithMany(com => com.Correspondencias)
-               .HasForeignKey(c => c.Importancia)
-               .HasConstraintName("FK_correspondencia_importancia");
+                .HasOne(c => c.ImportanciaNavigation)
+                .WithMany(com => com.Correspondencias)
+                .HasForeignKey(c => c.Importancia)
+                .HasConstraintName("FK_correspondencia_importancia");
 
             modelBuilder.Entity<Correspondencias>()
-               .HasOne(c => c.StatusNavigation)
-               .WithMany(com => com.Correspondencias)
-               .HasForeignKey(c => c.Status)
-               .HasConstraintName("FK_correspondencia_status");
+                .HasOne(c => c.StatusNavigation)
+                .WithMany(com => com.Correspondencias)
+                .HasForeignKey(c => c.Status)
+                .HasConstraintName("FK_correspondencia_status");
 
+            // CONFIGURACIÓN EXPLÍCITA
+            modelBuilder.Entity<FormularioAreaDestino>()
+                .HasOne(f => f.Correspondencia)
+                .WithMany()
+                .HasForeignKey(f => f.CorrespondenciaId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<FormularioAreaDestino>()
+                .HasOne(f => f.Area)
+                .WithMany()
+                .HasForeignKey(f => f.AreaId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
 
     }
