@@ -51,7 +51,8 @@ public class UsuarioAreaController : ControllerBase
     {
         var area = await _context.UsuarioArea
             .Where(ua => ua.UserId == userId)
-            .Join(_context.Area, ua => ua.AreaId, a => a.IdArea, (ua, a) => a.NombreArea)
+            .OrderBy(ua => ua.Id)
+            .Join(_context.Area, ua => ua.AreaId, a => a.IdArea, (ua, a) => new { area = a.NombreArea, areaId = a.IdArea })
             .FirstOrDefaultAsync();
 
         if (area == null)
@@ -59,7 +60,7 @@ public class UsuarioAreaController : ControllerBase
             return NotFound(new { mensaje = "Área no encontrada." });
         }
 
-        return Ok(new { area });
+        return Ok(area);
     }
 
    

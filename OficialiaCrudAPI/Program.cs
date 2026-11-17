@@ -62,6 +62,7 @@ builder.Services.AddAuthentication(options =>
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
     });
@@ -94,7 +95,7 @@ app.UseSwaggerUI();
 // Agrega el middleware de enrutamiento
 app.UseRouting();
 
-// Configura CORS después del enrutamiento
+// Configura CORS despuï¿½s del enrutamiento
 app.UseCors(MyAllowSpecificOrigins);
 
 app.UseHttpsRedirection();

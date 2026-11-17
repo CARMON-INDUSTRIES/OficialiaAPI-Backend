@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using OficialiaCrudAPI.Interfaces;
 using OficialiaCrudAPI.Services;
@@ -141,9 +144,19 @@ namespace OficialiaCrudAPI.Controllers
             return Ok(asignaciones);
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpDelete("eliminar/{id}")]
         public async Task<IActionResult> EliminarCorrespondencia(int id)
         {
+            var userName = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var usuario = string.IsNullOrEmpty(userName) ? null : await _userManager.FindByNameAsync(userName);
+            if (usuario == null ||
+                (!await _userManager.IsInRoleAsync(usuario, "Admin") &&
+                 !await _userManager.IsInRoleAsync(usuario, "SuperAdmin")))
+            {
+                return Forbid(JwtBearerDefaults.AuthenticationScheme);
+            }
+
             var resultado = await _service.EliminarCorrespondencia(id);
 
             if (!resultado)
