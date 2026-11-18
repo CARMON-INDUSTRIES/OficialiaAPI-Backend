@@ -8,6 +8,10 @@ namespace OficialiaCrudAPI.Models
         [Key]
         public int Id { get; set; }
 
+        public DateTimeOffset? FechaEnvio { get; set; }
+
+        public DateTimeOffset? FechaCambioEstado { get; set; }
+
         public int Folio { get; set; }
 
         public DateTime Fecha { get; set; }

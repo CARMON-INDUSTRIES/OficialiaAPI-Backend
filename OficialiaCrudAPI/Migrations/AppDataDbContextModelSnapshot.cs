@@ -295,6 +295,12 @@ namespace OficialiaCrudAPI.Migrations
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTimeOffset?>("FechaEnvio")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset?>("FechaCambioEstado")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<DateTime?>("FechaTerminacion")
                         .HasColumnType("datetime2");
 

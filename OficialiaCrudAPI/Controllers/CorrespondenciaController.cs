@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using OficialiaCrudAPI.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
@@ -15,6 +17,7 @@ namespace OficialiaCrudAPI.Controllers
     public class CorrespondenciaController : ControllerBase
     {
         private readonly ICorrespondenciaService _service;
+        private readonly AppDataDbContext _context;
         private readonly IComunidadesService _comunidadesService;
         private readonly IAreaService _areaService;
         private readonly IImportanciaService _importanciaService;
@@ -23,9 +26,10 @@ namespace OficialiaCrudAPI.Controllers
 
 
         public CorrespondenciaController(ICorrespondenciaService service, IComunidadesService comunidadesService
-            , IAreaService areaService, IImportanciaService importanciaService, IStatusService statusService, UserManager<IdentityUser> userManager)
+            , IAreaService areaService, IImportanciaService importanciaService, IStatusService statusService, UserManager<IdentityUser> userManager, AppDataDbContext context)
         {
             _service = service;
+            _context = context;
             _comunidadesService = comunidadesService;
             _areaService = areaService;
             _importanciaService = importanciaService;
@@ -41,6 +45,34 @@ namespace OficialiaCrudAPI.Controllers
             Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
             Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization");
             return Ok();
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpGet("seguimiento")]
+        public async Task<IActionResult> ObtenerSeguimiento()
+        {
+            var nombre = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var usuario = string.IsNullOrEmpty(nombre) ? null : await _userManager.FindByNameAsync(nombre);
+            if (usuario == null ||
+                (!await _userManager.IsInRoleAsync(usuario, "Admin") &&
+                 !await _userManager.IsInRoleAsync(usuario, "SuperAdmin")))
+                return Forbid(JwtBearerDefaults.AuthenticationScheme);
+
+            var registros = await _context.Correspondencia.AsNoTracking()
+                .OrderByDescending(c => c.Fecha).ThenByDescending(c => c.Id)
+                .Select(c => new
+                {
+                    c.Id, c.Folio, c.Fecha, c.FechaEnvio, c.FechaCambioEstado, c.Dependencia, c.Destinatario, c.Asunto,
+                    c.FechaTerminacion, c.Documento,
+                    AreaDescripcion = c.AreaNavigation.NombreArea,
+                    ComunidadDescripcion = c.ComunidadNavigation.NombreComunidad,
+                    ImportanciaDescripcion = c.ImportanciaNavigation.Nivel,
+                    StatusDescripcion = c.StatusNavigation.Estado,
+                    c.RespuestaCorrecta,
+                    MensajeRespuesta = c.Respuestas == null ? null : c.Respuestas.Mensaje,
+                    DocumentoRespuesta = c.Respuestas == null ? null : c.Respuestas.DocumentoRespuesta
+                }).ToListAsync();
+            return Ok(registros);
         }
 
         [HttpGet("obtener")]

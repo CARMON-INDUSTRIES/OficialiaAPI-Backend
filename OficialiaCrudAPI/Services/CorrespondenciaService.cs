@@ -91,6 +91,7 @@ namespace OficialiaCrudAPI.Services
             {
                 var nuevaCorrespondencia = new Correspondencias
                 {
+                    FechaEnvio = DateTimeOffset.UtcNow,
                     Folio = correspondenciaDto.Folio,
                     Fecha = correspondenciaDto.Fecha,
                     Dependencia = correspondenciaDto.Dependencia,
@@ -148,6 +149,8 @@ namespace OficialiaCrudAPI.Services
             correspondencia.CargoRemitente = correspondenciaDto.CargoRemitente;
             correspondencia.CargoDestinatario = correspondenciaDto.CargoDestinatario;
             correspondencia.Documento = correspondenciaDto.Documento;
+            if (correspondencia.Status != correspondenciaDto.Status)
+                correspondencia.FechaCambioEstado = DateTimeOffset.UtcNow;
             correspondencia.Status = correspondenciaDto.Status;
             correspondencia.Importancia = correspondenciaDto.Importancia;
             correspondencia.RespuestaCorrecta = correspondenciaDto.RespuestaCorrecta;
@@ -167,6 +170,8 @@ namespace OficialiaCrudAPI.Services
                 return false; // No se encontró la correspondencia
             }
 
+            if (correspondencia.Status != nuevoStatus)
+                correspondencia.FechaCambioEstado = DateTimeOffset.UtcNow;
             correspondencia.Status = nuevoStatus;
             _context.Correspondencia.Update(correspondencia);
             await _context.SaveChangesAsync();
