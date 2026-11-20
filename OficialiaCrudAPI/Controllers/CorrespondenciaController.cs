@@ -62,7 +62,7 @@ namespace OficialiaCrudAPI.Controllers
                 .OrderByDescending(c => c.Fecha).ThenByDescending(c => c.Id)
                 .Select(c => new
                 {
-                    c.Id, c.Folio, c.Fecha, c.FechaEnvio, c.FechaCambioEstado, c.Dependencia, c.Destinatario, c.Asunto,
+                    c.Id, c.Folio, c.Fecha, c.FechaEnvio, c.FechaCambioEstado, c.Dependencia, c.Destinatario, c.Asunto, c.TipoDocumento, c.Calle, c.Telefono,
                     c.FechaTerminacion, c.Documento,
                     AreaDescripcion = c.AreaNavigation.NombreArea,
                     ComunidadDescripcion = c.ComunidadNavigation.NombreComunidad,

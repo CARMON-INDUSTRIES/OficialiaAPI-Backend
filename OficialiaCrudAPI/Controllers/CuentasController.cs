@@ -86,13 +86,15 @@ namespace OficialiaCrudAPI.Controllers
         public async Task<IActionResult> Login(LoginModel model)
         {
 
-            var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, false, false);
+            var user = await _userManager.FindByNameAsync(model.UserName);
+            if (user == null) return Unauthorized();
+            var result = await _signInManager.PasswordSignInAsync(user, model.Password, false, false);
             if (result.Succeeded)
             {
-                var user = await _userManager.FindByNameAsync(model.UserName);
-                var token = GenerateJwtToken(user);
+                var roles = await _userManager.GetRolesAsync(user);
+                var token = GenerateJwtToken(user, roles);
 
-                return Ok(new { token });
+                return Ok(new { token, user = new { user.Id, user.UserName, user.Email, Roles = roles } });
             }
 
             return Unauthorized();
@@ -142,9 +144,8 @@ namespace OficialiaCrudAPI.Controllers
             return Ok(new { UserId = user.Id });
         }
 
-        private string GenerateJwtToken(IdentityUser user)
+        private string GenerateJwtToken(IdentityUser user, IList<string> roles)
         {
-            var roles = _userManager.GetRolesAsync(user).Result;
             var role = roles.FirstOrDefault();
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);

@@ -12,7 +12,16 @@ namespace OficialiaCrudAPI.Models
 
         public DateTimeOffset? FechaCambioEstado { get; set; }
 
-        public int Folio { get; set; }
+        [System.ComponentModel.DataAnnotations.MaxLength(100)]
+    public string? TipoDocumento { get; set; }
+
+    [System.ComponentModel.DataAnnotations.MaxLength(250)]
+    public string? Calle { get; set; }
+
+    [System.ComponentModel.DataAnnotations.MaxLength(50)]
+    public string? Telefono { get; set; }
+
+    public int Folio { get; set; }
 
         public DateTime Fecha { get; set; }
 

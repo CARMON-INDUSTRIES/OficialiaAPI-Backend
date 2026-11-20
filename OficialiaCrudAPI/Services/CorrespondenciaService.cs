@@ -47,6 +47,9 @@ namespace OficialiaCrudAPI.Services
                     Asunto = c.Asunto,
                     Remitente = c.Remitente,
                     Destinatario = c.Destinatario,
+                    TipoDocumento = c.TipoDocumento,
+                    Calle = c.Calle,
+                    Telefono = c.Telefono,
                     Comunidad = c.Comunidad,
                     CargoRemitente = c.CargoRemitente,
                     CargoDestinatario = c.CargoDestinatario,
@@ -98,6 +101,9 @@ namespace OficialiaCrudAPI.Services
                     Asunto = correspondenciaDto.Asunto,
                     Remitente = correspondenciaDto.Remitente,
                     Destinatario = correspondenciaDto.Destinatario,
+                    TipoDocumento = correspondenciaDto.TipoDocumento,
+                    Calle = correspondenciaDto.Calle,
+                    Telefono = correspondenciaDto.Telefono,
                     Comunidad = correspondenciaDto.Comunidad,
                     CargoRemitente = correspondenciaDto.CargoRemitente,
                     CargoDestinatario = correspondenciaDto.CargoDestinatario,
@@ -145,6 +151,9 @@ namespace OficialiaCrudAPI.Services
             correspondencia.Asunto = correspondenciaDto.Asunto;
             correspondencia.Remitente = correspondenciaDto.Remitente;
             correspondencia.Destinatario = correspondenciaDto.Destinatario;
+            correspondencia.TipoDocumento = correspondenciaDto.TipoDocumento;
+            correspondencia.Calle = correspondenciaDto.Calle;
+            correspondencia.Telefono = correspondenciaDto.Telefono;
             correspondencia.Comunidad = correspondenciaDto.Comunidad;
             correspondencia.CargoRemitente = correspondenciaDto.CargoRemitente;
             correspondencia.CargoDestinatario = correspondenciaDto.CargoDestinatario;
@@ -197,6 +206,9 @@ namespace OficialiaCrudAPI.Services
                 Asunto = c.Asunto,
                 Remitente = c.Remitente,
                 Destinatario = c.Destinatario,
+                TipoDocumento = c.TipoDocumento,
+                Calle = c.Calle,
+                Telefono = c.Telefono,
                 Comunidad = c.Comunidad,
                 CargoRemitente = c.CargoRemitente,
                 CargoDestinatario = c.CargoDestinatario,

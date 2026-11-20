@@ -150,26 +150,41 @@ public class RolesController : ControllerBase
         return Ok(roles);
     }
 
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpGet("actual")]
+    public async Task<IActionResult> ObtenerUsuarioActual()
+    {
+        var nombre = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var usuario = string.IsNullOrEmpty(nombre) ? null : await _userManager.FindByNameAsync(nombre);
+        if (usuario == null) return Unauthorized();
+        var roles = await _userManager.GetRolesAsync(usuario);
+        return Ok(new { usuario.Id, usuario.UserName, usuario.Email, Roles = roles });
+    }
+
     [HttpGet("GetUsersWithRoles")]
     public async Task<IActionResult> GetUsersWithRoles()
     {
-        var users = _userManager.Users.ToList();
-        var usersWithRoles = new List<object>();
-
-        foreach (var user in users)
-        {
-            var roles = await _userManager.GetRolesAsync(user);
-            usersWithRoles.Add(new
+        var users = await _context.Users.AsNoTracking()
+            .Select(user => new
             {
                 user.Id,
-                user.UserName, 
+                user.UserName,
                 user.Email,
-                Roles = roles
-            });
-        }
-
-        return Ok(usersWithRoles);
+                Roles = (from assignment in _context.UserRoles
+                         join role in _context.Roles on assignment.RoleId equals role.Id
+                         where assignment.UserId == user.Id
+                         select role.Name).ToList(),
+                AreaId = _context.UsuarioArea.Where(a => a.UserId == user.Id)
+                    .OrderBy(a => a.Id).Select(a => (int?)a.AreaId).FirstOrDefault(),
+                NombreArea = (from assignment in _context.UsuarioArea
+                              join area in _context.Area on assignment.AreaId equals area.IdArea
+                              where assignment.UserId == user.Id
+                              orderby assignment.Id
+                              select area.NombreArea).FirstOrDefault()
+            }).ToListAsync();
+        return Ok(users);
     }
+
 }
 
 public class AsignarRolRequest

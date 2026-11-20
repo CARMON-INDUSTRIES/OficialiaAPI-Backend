@@ -1,6 +1,15 @@
 ﻿public class CorrespondenciaDto
 {
     public int Id { get; set; }
+    [System.ComponentModel.DataAnnotations.MaxLength(100)]
+    public string? TipoDocumento { get; set; }
+
+    [System.ComponentModel.DataAnnotations.MaxLength(250)]
+    public string? Calle { get; set; }
+
+    [System.ComponentModel.DataAnnotations.MaxLength(50)]
+    public string? Telefono { get; set; }
+
     public int Folio { get; set; }
     public DateTime Fecha { get; set; }
     public string? Dependencia { get; set; }
